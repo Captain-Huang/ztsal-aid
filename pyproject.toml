@@ -1,0 +1,50 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lastz-assistant"
+version = "0.1.0"
+description = "Last Z 电脑版外部模板匹配辅助：联盟帮助与断线重连"
+readme = "README.md"
+requires-python = ">=3.11"
+classifiers = [
+    "Environment :: Win32 (MS Windows)",
+    "Operating System :: Microsoft :: Windows",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Games/Entertainment",
+]
+dependencies = [
+    "numpy>=2.5.4,<2.6",
+    "opencv-python>=5.0.0.93,<5.1",
+    "mss>=10.2,<11",
+    "PyAutoGUI==0.9.54",
+    "pywin32>=312,<313; sys_platform == 'win32'",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=9.2,<10",
+    "ruff>=0.17.4,<0.18",
+]
+
+[project.scripts]
+lastz-assistant = "lastz_assistant.main:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-q"
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
