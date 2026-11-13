@@ -1,4 +1,4 @@
-"""Windows 上的窗口枚举、客户区截图、前台判断、模拟点击和 F12 热键。
+"""Windows 上的窗口枚举、客户区截图、前台判断、模拟点击和 Ctrl+F12 热键。
 
 只使用屏幕上已经可见的像素和普通鼠标点击。不读取游戏进程内存，不注入，不抓包。
 """
@@ -22,7 +22,9 @@ from lastz_assistant.models import CaptureError, Rect, WindowInfo
 
 _HOTKEY_ID = 1
 _VK_F12 = 0x7B
+_MOD_CONTROL = 0x0002
 _MOD_NOREPEAT = 0x4000
+_HOTKEY_MODIFIERS = _MOD_CONTROL | _MOD_NOREPEAT
 _WM_HOTKEY = 0x0312
 _PM_REMOVE = 0x0001
 _DWMWA_CLOAKED = 14
@@ -96,7 +98,7 @@ class PyAutoGuiPointer:
 
 
 class WindowsHotkeyService:
-    """在独立线程注册 F12。回调返回前不能调用 stop，否则会和本线程死锁。"""
+    """在独立线程注册 Ctrl+F12。回调返回前不能调用 stop，否则会和本线程死锁。"""
 
     def __init__(self) -> None:
         self._stop = threading.Event()
@@ -133,8 +135,8 @@ class WindowsHotkeyService:
             ]
             user32.PeekMessageW.restype = wintypes.BOOL
             try:
-                if not user32.RegisterHotKey(None, _HOTKEY_ID, _MOD_NOREPEAT, _VK_F12):
-                    error_box[0] = "无法注册 F12 全局热键（可能被其他程序占用）"
+                if not user32.RegisterHotKey(None, _HOTKEY_ID, _HOTKEY_MODIFIERS, _VK_F12):
+                    error_box[0] = "无法注册 Ctrl+F12 全局热键（可能被其他程序占用）"
                     registered.set()
                     return
                 did_register = True
@@ -164,7 +166,7 @@ class WindowsHotkeyService:
         if not registered.wait(2.0):
             stop_event.set()
             self._thread.join(timeout=2.0)
-            return error_box[0] or "注册 F12 超时"
+            return error_box[0] or "注册 Ctrl+F12 超时"
         return error_box[0]
 
     def stop(self) -> None:

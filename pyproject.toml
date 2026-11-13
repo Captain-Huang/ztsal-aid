@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "lastz-assistant"
 version = "0.1.0"
-description = "Last Z 电脑版外部模板匹配辅助：联盟帮助与断线重连"
+description = "Last Z 电脑版外部模板匹配辅助：联盟帮助与领取资源"
 readme = "README.md"
 requires-python = ">=3.11"
 classifiers = [

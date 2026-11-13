@@ -6,9 +6,15 @@ from lastz_assistant.catalog import ACTION_CATALOG, index_catalog
 from lastz_assistant.models import ActionSpec, ConfigError
 
 
-def test_shipped_catalog_is_only_the_two_mvp_actions() -> None:
-    assert [spec.id for spec in ACTION_CATALOG] == ["alliance_help", "reconnect"]
-    assert [spec.name for spec in ACTION_CATALOG] == ["联盟帮助", "断线重连"]
+def test_shipped_catalog_lists_the_supported_actions() -> None:
+    assert [spec.id for spec in ACTION_CATALOG] == [
+        "alliance_help",
+        "claim_resources",
+    ]
+    assert [spec.name for spec in ACTION_CATALOG] == ["联盟帮助", "领取资源"]
+    claim = next(spec for spec in ACTION_CATALOG if spec.id == "claim_resources")
+    assert claim.default_threshold == 0.85
+    assert claim.default_cooldown_sec == 3.0
     assert all(spec.confirm_frames >= 2 for spec in ACTION_CATALOG)
     blob = " ".join(f"{spec.id} {spec.name} {spec.description}" for spec in ACTION_CATALOG)
     assert "治疗" not in blob

@@ -1,7 +1,7 @@
 """随程序发布的动作目录。
 
 增加动作时只在这里追加一条描述，并准备对应模板。引擎和界面都读取这份目录，
-不单独编写联盟帮助或断线重连的点击逻辑。
+不单独编写某个按钮的点击逻辑。
 """
 
 from __future__ import annotations
@@ -18,11 +18,11 @@ ACTION_CATALOG: tuple[ActionSpec, ...] = (
         confirm_frames=2,
     ),
     ActionSpec(
-        id="reconnect",
-        name="断线重连",
-        description="匹配断线弹窗上的“重连”按钮，连续确认后点击。窗口不在前台时不会点。",
-        default_threshold=0.88,
-        default_cooldown_sec=8.0,
+        id="claim_resources",
+        name="领取资源",
+        description="在游戏窗口客户区内匹配“领取资源”按钮，连续确认后点击按钮中心。",
+        default_threshold=0.85,
+        default_cooldown_sec=3.0,
         confirm_frames=2,
     ),
 )

@@ -22,7 +22,7 @@ class Recorder:
 def test_drain_respects_limit_and_dispatches_both_message_types() -> None:
     events: queue.Queue[EngineEvent | EmergencyStop] = queue.Queue()
     events.put(EngineEvent(EventKind.LOG, "一条"))
-    events.put(EmergencyStop("F12 紧急停止"))
+    events.put(EmergencyStop("Ctrl+F12 紧急停止"))
     events.put(EngineEvent(EventKind.CLICK, "点了"))
     recorder = Recorder()
     assert drain_events(events, recorder, limit=2) == 2

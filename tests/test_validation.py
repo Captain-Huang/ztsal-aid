@@ -14,7 +14,7 @@ def _settings(**overrides: object) -> RunSettings:
         "dry_run": True,
         "actions": (
             ActionSettings("alliance_help", True, "help.png", 0.85, 5),
-            ActionSettings("reconnect", False, "", 0.88, 8),
+            ActionSettings("claim_resources", False, "", 0.85, 3),
         ),
     }
     base.update(overrides)
@@ -35,7 +35,7 @@ def test_rejects_bad_interval_threshold_cooldown_and_missing_pieces() -> None:
             _settings(
                 actions=(
                     ActionSettings("alliance_help", False, "", 0.85, 5),
-                    ActionSettings("reconnect", False, "", 0.88, 8),
+                    ActionSettings("claim_resources", False, "", 0.85, 3),
                 )
             ),
             ACTION_CATALOG,

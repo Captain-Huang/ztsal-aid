@@ -58,6 +58,11 @@ def _pump(root: tk.Tk, predicate: Callable[[], bool], timeout: float = 4.0) -> b
     return False
 
 
+def _only(app: AssistantApp, action_id: str) -> None:
+    for current_id, form in app.forms.items():
+        form.enabled.set(current_id == action_id)
+
+
 def _app(root: tk.Tk, scene, hotkey: FakeHotkey, settings_path: Path) -> AssistantApp:
     return AssistantApp(
         root,
@@ -77,8 +82,8 @@ def test_gui_dry_run_then_real_click_and_close_releases_worker(
     hotkey = FakeHotkey()
     app = _app(tk_root, scene, hotkey, tmp_path / "settings.json")
     app.window_combo.current(0)
+    _only(app, "alliance_help")
     app.forms["alliance_help"].path.set(str(scene.template_path))
-    app.forms["reconnect"].enabled.set(False)
     app.interval_var.set("0.2")
     app.dry_run_var.set(True)
 
@@ -101,7 +106,7 @@ def test_gui_dry_run_then_real_click_and_close_releases_worker(
     loaded = load_settings(tmp_path / "settings.json", ACTION_CATALOG)
     assert loaded["dry_run"] is False
     assert loaded["actions"]["alliance_help"]["template_path"] == str(scene.template_path)
-    assert loaded["actions"]["reconnect"]["enabled"] is False
+    assert loaded["actions"]["claim_resources"]["enabled"] is False
     assert loaded["window_title"] == "Last Z"
 
 
@@ -115,17 +120,17 @@ def test_gui_reports_template_and_hotkey_errors_without_a_worker(
     assert app._worker is None
 
     app.window_combo.current(0)
-    app.forms["reconnect"].enabled.set(False)
+    _only(app, "alliance_help")
     app.forms["alliance_help"].path.set(str(tmp_path / "missing.png"))
     app.start_button.invoke()
     assert "不存在" in app.log_text.get("1.0", "end")
     assert app._worker is None
 
     app.forms["alliance_help"].path.set(str(scene.template_path))
-    broken = FakeHotkey(fail_message="无法注册 F12")
+    broken = FakeHotkey(fail_message="无法注册 Ctrl+F12")
     app._hotkey = broken
     app.start_button.invoke()
-    assert "无法注册 F12" in app.log_text.get("1.0", "end")
+    assert "无法注册 Ctrl+F12" in app.log_text.get("1.0", "end")
     assert app._worker is None
     assert broken.stop_count >= 1
     app.close()
@@ -137,8 +142,8 @@ def test_gui_shows_capture_failure_and_stops(tmp_path: Path, tk_root: tk.Tk) -> 
     hotkey = FakeHotkey()
     app = _app(tk_root, scene, hotkey, tmp_path / "settings.json")
     app.window_combo.current(0)
+    _only(app, "alliance_help")
     app.forms["alliance_help"].path.set(str(scene.template_path))
-    app.forms["reconnect"].enabled.set(False)
     app.interval_var.set("0.2")
     app.start_button.invoke()
     assert _pump(tk_root, lambda: app._status_var.get().startswith("错误：截图失败"))
@@ -156,8 +161,8 @@ def test_emergency_stop_from_another_thread_does_not_deadlock(
     hotkey = FakeHotkey()
     app = _app(tk_root, scene, hotkey, tmp_path / "settings.json")
     app.window_combo.current(0)
+    _only(app, "alliance_help")
     app.forms["alliance_help"].path.set(str(scene.template_path))
-    app.forms["reconnect"].enabled.set(False)
     app.interval_var.set("0.2")
     app.start_button.invoke()
     assert _pump(tk_root, lambda: "运行中" in app.log_text.get("1.0", "end"))

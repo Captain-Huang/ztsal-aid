@@ -10,7 +10,11 @@ from lastz_assistant.settings_store import default_settings, load_settings, save
 def test_missing_or_corrupt_file_falls_back_to_dry_run_defaults(tmp_path: Path) -> None:
     loaded = load_settings(tmp_path / "missing.json", ACTION_CATALOG)
     assert loaded["dry_run"] is True
-    assert set(loaded["actions"]) == {"alliance_help", "reconnect"}
+    assert set(loaded["actions"]) == {"alliance_help", "claim_resources"}
+    assert loaded["actions"]["claim_resources"]["enabled"] is True
+    assert loaded["actions"]["claim_resources"]["template_path"] == ""
+    assert loaded["actions"]["claim_resources"]["threshold"] == 0.85
+    assert loaded["actions"]["claim_resources"]["cooldown_sec"] == 3.0
     assert loaded["actions"]["alliance_help"]["template_path"] == ""
 
     corrupt = tmp_path / "bad.json"

@@ -75,16 +75,18 @@ def test_small_position_jitter_still_confirms(tmp_path: Path) -> None:
 
 
 def test_cooldown_is_independent_per_action(tmp_path: Path) -> None:
-    help_spec, reconnect_spec = ACTION_CATALOG
+    by_id = {spec.id: spec for spec in ACTION_CATALOG}
+    help_spec = by_id["alliance_help"]
+    claim_spec = by_id["claim_resources"]
     canvas = blank(220, 160)
     help_patch = unique_patch(20, 16, seed=11)
-    reconnect_patch = unique_patch(22, 18, seed=12)
+    claim_patch = unique_patch(22, 18, seed=12)
     paint(canvas, help_patch, 10, 20)
-    paint(canvas, reconnect_patch, 80, 40)
+    paint(canvas, claim_patch, 80, 40)
     help_path = tmp_path / "help.png"
-    reconnect_path = tmp_path / "reconnect.png"
+    claim_path = tmp_path / "claim.png"
     write_png(help_path, help_patch)
-    write_png(reconnect_path, reconnect_patch)
+    write_png(claim_path, claim_patch)
     windows = FakeWindows()
     hwnd = 7
     windows.windows[hwnd] = WindowInfo(hwnd, "Last Z", Rect(100, 200, 220, 160))
@@ -100,7 +102,7 @@ def test_cooldown_is_independent_per_action(tmp_path: Path) -> None:
             dry_run=False,
             actions=(
                 ActionSettings("alliance_help", True, str(help_path), 0.85, 5),
-                ActionSettings("reconnect", True, str(reconnect_path), 0.85, 30),
+                ActionSettings("claim_resources", True, str(claim_path), 0.85, 30),
             ),
         )
     )
@@ -113,7 +115,7 @@ def test_cooldown_is_independent_per_action(tmp_path: Path) -> None:
     assert len(pointer.clicks) == 3
     assert pointer.clicks[-1] == (120, 228)
     assert help_spec.id == "alliance_help"
-    assert reconnect_spec.default_cooldown_sec == 8
+    assert claim_spec.default_cooldown_sec == 3
 
 
 def test_cooldown_blocks_until_it_expires(tmp_path: Path) -> None:
@@ -306,7 +308,7 @@ def test_disabled_action_with_empty_template_is_ignored(tmp_path: Path) -> None:
             dry_run=False,
             actions=(
                 ActionSettings("alliance_help", True, str(scene.template_path), 0.85, 5),
-                ActionSettings("reconnect", False, "", 0.88, 8),
+                ActionSettings("claim_resources", False, "", 0.85, 3),
             ),
         )
     )

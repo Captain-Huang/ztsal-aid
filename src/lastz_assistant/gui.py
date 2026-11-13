@@ -87,7 +87,7 @@ class AssistantApp:
         self._set_status("就绪")
         self._append_log(f"DPI 感知：{dpi_mode or '未设置'}")
         self._append_log("默认演练：只记录不点击。确认分数稳定后再取消演练。")
-        self._append_log("F12 只在自动点击运行期间占用，停止或关闭窗口后释放。")
+        self._append_log("Ctrl+F12 只在自动点击运行期间占用，停止或关闭窗口后释放。")
         self.root.after(100, self._poll)
 
     def refresh_windows(self) -> None:
@@ -465,7 +465,7 @@ class AssistantApp:
     def _on_emergency(self) -> None:
         worker = self._worker
         if worker is None or not worker.is_alive():
-            self._queue.put(EngineEvent(EventKind.LOG, "当前没有在运行，已忽略 F12"))
+            self._queue.put(EngineEvent(EventKind.LOG, "当前没有在运行，已忽略 Ctrl+F12"))
             return
         self._stop_event.set()
         self._queue.put(EmergencyStop())

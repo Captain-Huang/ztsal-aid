@@ -11,7 +11,7 @@ from lastz_assistant.models import EngineEvent
 
 @dataclass(frozen=True)
 class EmergencyStop:
-    message: str = "F12 紧急停止"
+    message: str = "Ctrl+F12 紧急停止"
 
 
 class UiHandler(Protocol):

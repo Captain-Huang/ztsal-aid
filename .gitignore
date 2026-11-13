@@ -14,3 +14,4 @@ templates/*.png
 *.tmp
 .idea/
 .vscode/
+logs/
